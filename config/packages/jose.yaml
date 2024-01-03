@@ -1,0 +1,15 @@
+jose:
+  jws:
+    loaders:
+      auth0:
+        serializers: [ 'jws_compact' ]
+        signature_algorithms: [ 'HS256', 'RS256' ]
+        header_checkers: [ 'iat', 'exp', 'nbf' ]
+  jku_factory:
+    enabled: true
+    client: jku_client
+    request_factory: nyholm.psr7.psr17_factory
+  key_sets:
+    auth0:
+      jku: # Method
+        url: 'https://services-metodomerenda.eu.auth0.com/.well-known/jwks.json'
