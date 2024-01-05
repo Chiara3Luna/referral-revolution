@@ -126,10 +126,14 @@ class Auth0Authenticator extends AbstractAuthenticator implements Authentication
 		try {
 			$accessToken = $this->auth0JwsLoader->loadAndVerifyWithKeySet( $token->getToken(), $this->auth0KeySet, $signature );
 
-			$request->getSession()->set( 'access_token', $token->getToken() );
-
 			$payload = json_decode( $accessToken->getPayload(), true );
-			$request->getSession()->set( 'access_token_payload', $payload );
+
+			$session_token   = [
+				'access_token' => $token->getToken(),
+				'payload' => $payload
+			];
+
+			$request->getSession()->set( 'access_token', $session_token );
 
 			return new SelfValidatingPassport( new UserBadge( $payload['sub'], fn( $identifier ) => $this->loadUserFromAccessToken( $payload ) ) );
 		} catch ( \Throwable $e ) {
