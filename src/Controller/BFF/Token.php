@@ -22,8 +22,8 @@ class Token extends AbstractController {
 	#[Route( '/.well-known/bff-token', name: 'bff_token' )]
 	public function index( Request $request ) {
 
-		if(!$this->security->isGranted( 'IS_AUTHENTICATED_FULLY')) {
-			return new Response('Unauthorized', 401);
+		if ( ! $this->security->isGranted( 'IS_AUTHENTICATED_FULLY' ) ) {
+			return new Response( 'Unauthorized', 401 );
 		}
 
 		$session = $request->getSession();
@@ -46,7 +46,8 @@ class Token extends AbstractController {
 			[
 				'access_token' => $access_token['access_token'],
 				'expires_in'   => $access_token['payload']['exp'] - $this->clock->now()->getTimestamp(),
-				'scope'        => $access_token['payload']['scope']
+				'scope'        => $access_token['payload']['scope'],
+				'roles'        => $access_token['payload']['services.metodomerenda.com/roles']
 			],
 			200
 		);
