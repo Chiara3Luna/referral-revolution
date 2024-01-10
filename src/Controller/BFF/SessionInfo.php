@@ -13,7 +13,6 @@ use Symfony\Component\Routing\Attribute\Route;
 class SessionInfo extends AbstractController {
 
 	public function __construct(
-		private readonly ClockInterface $clock,
 		private readonly Security $security
 	) {
 	}
@@ -40,6 +39,16 @@ class SessionInfo extends AbstractController {
 				'error_description' => ' No token present in session'
 			], status: 400 );
 		}
+
+		$access_token = $session->get( 'access_token', false );
+		if ( $access_token === false ) {
+			return new JsonResponse( data: [
+				'error'             => 'backend_not_ready',
+				'error_description' => ' No token present in session'
+			], status: 400 );
+		}
+
+		$idToken['payload']['roles'] = $access_token['payload']['services.metodomerenda.com/roles'];
 
 		return new JsonResponse($idToken['payload'], 200);
 	}

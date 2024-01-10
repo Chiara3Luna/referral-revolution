@@ -47,7 +47,6 @@ class Token extends AbstractController {
 				'access_token' => $access_token['access_token'],
 				'expires_in'   => $access_token['payload']['exp'] - $this->clock->now()->getTimestamp(),
 				'scope'        => $access_token['payload']['scope'],
-				'roles'        => $access_token['payload']['services.metodomerenda.com/roles']
 			],
 			200
 		);
