@@ -10,8 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-class Token extends AbstractController {
-
+class SessionInfo extends AbstractController {
 
 	public function __construct(
 		private readonly ClockInterface $clock,
@@ -19,7 +18,7 @@ class Token extends AbstractController {
 	) {
 	}
 
-	#[Route( '/.well-known/bff-token', name: 'bff_token' )]
+	#[Route('/.well-known/bff-sessioninfo', name: 'bff_sessioninfo')]
 	public function index( Request $request ): JsonResponse|Response {
 
 		if ( ! $this->security->isGranted( 'IS_AUTHENTICATED_FULLY' ) ) {
@@ -34,22 +33,14 @@ class Token extends AbstractController {
 			], status: 400 );
 		}
 
-		$access_token = $session->get( 'access_token', false );
-		if ( $access_token === false ) {
+		$idToken = $session->get( 'id_token', false );
+		if ( $idToken === false ) {
 			return new JsonResponse( data: [
 				'error'             => 'backend_not_ready',
 				'error_description' => ' No token present in session'
 			], status: 400 );
 		}
 
-		return new JsonResponse(
-			[
-				'access_token' => $access_token['access_token'],
-				'expires_in'   => $access_token['payload']['exp'] - $this->clock->now()->getTimestamp(),
-				'scope'        => $access_token['payload']['scope'],
-				'roles'        => $access_token['payload']['services.metodomerenda.com/roles']
-			],
-			200
-		);
+		return new JsonResponse($idToken['payload'], 200);
 	}
 }

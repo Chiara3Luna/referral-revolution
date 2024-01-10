@@ -111,7 +111,11 @@ class Auth0Authenticator extends AbstractAuthenticator implements Authentication
 			try {
 				$idToken = $this->auth0JwsLoader->loadAndVerifyWithKeySet( $values['id_token'], $this->auth0KeySet, $signature );
 
-				$request->getSession()->set( 'id_token', $values['id_token'] );
+				$session_id_token = [
+					'id_token' => $values['id_token'],
+					'payload' => json_decode($idToken->getPayload(), true)
+				];
+				$request->getSession()->set( 'id_token', $session_id_token );
 
 				$payload = json_decode( $idToken->getPayload(), true );
 				$request->getSession()->set( 'id_token_payload', $payload );

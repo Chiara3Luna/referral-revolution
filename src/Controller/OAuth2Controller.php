@@ -40,9 +40,9 @@ class OAuth2Controller {
 			];
 
 			if ( $request->hasSession() ) {
-				$id_token = $request->getSession()->get( 'id_token' );
+				$idToken = $request->getSession()->get( 'id_token' );
 
-				$variables['id_token_hint'] = $id_token;
+				$variables['id_token_hint'] = $idToken['id_token'];
 			}
 			$this->security->logout( false );
 
