@@ -33,8 +33,8 @@ class Auth0Authenticator extends AbstractAuthenticator implements Authentication
 	private const SCOPES = [
 		'openid',
 		'profile',
-//		'email',
-//		'offline_access'
+		'email',
+		'offline_access'
 	];
 
 	public function __construct(
