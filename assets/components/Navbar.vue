@@ -1,73 +1,72 @@
 <template>
+  <!-- Inizio navbar -->
   <header>
     <div class="container-fluid">
+
       <div class="navb-logo">
-        <img src="./img/logo/metodo-merenda.svg" alt="Logo">
+        <img src="#" alt="Logo">
       </div>
 
       <div class="navb-items d-none d-xl-flex">
-        <div class="item">
+        <div class="item" v-if="isAuthenticated">
           <router-link to="/">Home</router-link>
         </div>
-        <div class="item">
-          <router-link to="/services">Users</router-link>
+
+        <div class="item" v-if="isAuthenticated && isReferrer">
+          <router-link to="/dashboard">Referrer Dashboard</router-link>
         </div>
-        <div class="item">
-          <router-link to="/cases">Listeners</router-link>
+
+        <div class="item" v-if="isAuthenticated && isTutor">
+          <router-link to="/dashboard">Tutor Dashboard</router-link>
         </div>
-        <div class="item">
-          <router-link to="/about">Dashboard</router-link>
-        </div>
-        <div class="item-button">
-          <a href="/contact" @click.prevent="logout">Logout</a>
+
+        <div class="item-button" v-if="isAuthenticated">
+          <button @click="logout" type="button">Logout</button>
         </div>
       </div>
 
-      <div class="mobile-toggler d-lg-none">
-        <a href="#" data-bs-toggle="modal" data-bs-target="#navbModal">
-          <i class="fa-solid fa-bars"></i>
-        </a>
-      </div>
+      <!-- Mobile Toggler e Modal -->
 
-      <!-- Modal Content -->
-      <div class="modal fade" id="navbModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <img src="./img/logo/metodo-merenda.svg" alt="Logo">
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-            </div>
-            <div class="modal-body">
-              <div class="modal-line">
-                <i class="fa-solid fa-house"></i><router-link to="/">Home</router-link>
-              </div>
-              <div class="modal-line">
-                <i class="fa-solid fa-users"></i><router-link to="/services">Users</router-link>
-              </div>
-              <div class="modal-line">
-                <i class="fa-solid fa-clipboard-list"></i><router-link to="/cases">Listeners</router-link>
-              </div>
-              <div class="modal-line">
-                <i class="fa-solid fa-table-columns"></i><router-link to="/about">Dashboard</router-link>
-              </div>
-              <a href="/contact" class="navb-button" type="button">Log Out</a>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </header>
 </template>
 
 <script>
+//importa libreria
+import createAuth0Client from '@auth0/auth0-spa-js';
+
 export default {
+  data() {
+    return {
+      isAuthenticated: false,
+      isReferrer: false,
+      isTutor: false,
+    };
+  },
   methods: {
-    logout() {
-      // La logica per il logout va qui
-    }
-  }
+    async logout() {
+      //istanza Auth0Client
+      const auth0 = await createAuth0Client({
+        domain: 'metodomerenda.auth0.com', //metti dominio
+        client_id: 'client-id', //mettere client id
+        redirect_uri: window.location.origin,
+      });
+
+      await auth0.logout();
+
+      //aggiorna stato autenticazione su vuex
+      this.$store.commit('setAuthenticated', false);
+      this.$store.commit('setUserRole', null);
+
+      //redirect
+      this.$router.push('/');
+    },
+  },
+  created() {
+    this.isAuthenticated = this.$store.state.isAuthenticated;
+    this.isReferrer = this.$store.state.userRole === 'Referrer';
+    this.isTutor = this.$store.state.userRole === 'Tutor';
+  },
 };
 </script>
 

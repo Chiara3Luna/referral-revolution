@@ -1,12 +1,8 @@
 // assets/js/app.js
-import Vue from 'vue';
+import { createApp } from 'vue'
 import App from './components/App.vue'
 
-
-new Vue({
-    el: '#app',
-    components: {App}
-});
+createApp(App).mount('#app')
 
 
 
