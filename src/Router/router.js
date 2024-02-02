@@ -1,13 +1,10 @@
 // src/router/router.js
-import Vue from 'vue';
-import Router from 'vue-router';
-import store from '../store/store';
+import { createRouter, createWebHistory } from 'vue-router';
 
 import Referrer from '../../assets/components/ruoli/Referrer.vue';
 import Admin from '../../assets/components/ruoli/Admin.vue';
 import Tutor from '../../assets/components/ruoli/Tutor.vue';
-
-Vue.use(Router);
+import Dashboard from "../../assets/components/Dashboard.vue";
 
 const routes = [
     {
@@ -25,12 +22,19 @@ const routes = [
         component: Tutor,
         meta: { requiresAuth: true, requiredRole: 'tutor' },
     },
+    {
+        path: '/dashboard',
+        component: Dashboard,
+        meta: { requiresAuth: true},
+    }
 ];
 
-const router = new Router({
+const router = createRouter({
+    history: createWebHistory(),
     routes,
 });
 
+/*
 router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth) {
         //verifico se l'utente è autenticato
@@ -53,5 +57,6 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
+*/
 
 export default router;

@@ -8,19 +8,11 @@
       </div>
 
       <div class="navb-items d-none d-xl-flex">
-        <div class="item" v-if="isAuthenticated">
-          <router-link to="/">Home</router-link>
+        <div class="item">
+          <router-link to="/dashboard">Home</router-link>
         </div>
 
-        <div class="item" v-if="isAuthenticated && isReferrer">
-          <router-link to="/dashboard">Referrer Dashboard</router-link>
-        </div>
-
-        <div class="item" v-if="isAuthenticated && isTutor">
-          <router-link to="/dashboard">Tutor Dashboard</router-link>
-        </div>
-
-        <div class="item-button" v-if="isAuthenticated">
+        <div class="item-button">
           <button @click="logout" type="button">Logout</button>
         </div>
       </div>
@@ -32,9 +24,6 @@
 </template>
 
 <script>
-//importa libreria
-import createAuth0Client from '@auth0/auth0-spa-js';
-
 export default {
   data() {
     return {
