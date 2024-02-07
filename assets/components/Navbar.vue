@@ -11,6 +11,9 @@
         <div class="item">
           <router-link to="/dashboard">Home</router-link>
         </div>
+        <div class="item" v-if="sessionInfo.sessionIsValid">
+          <router-link to="/item">Item 2</router-link>
+        </div>
 
         <div class="item-button">
           <button @click="logout" type="button">Logout</button>
@@ -24,12 +27,24 @@
 </template>
 
 <script>
+import { useSession } from '../session.js';
+import Dashboard from "./Dashboard.vue";
+import session from "../stores/session.js";
+
+const sessionInfo = useSession();
 export default {
+  computed: {
+    session() {
+      return session
+    }
+  },
+  components: {Dashboard},
   data() {
     return {
       isAuthenticated: false,
       isReferrer: false,
       isTutor: false,
+      sessionInfo: sessionInfo
     };
   },
   methods: {
