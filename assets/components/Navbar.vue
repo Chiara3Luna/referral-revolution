@@ -2,7 +2,6 @@
   <!-- Inizio navbar -->
   <header>
     <div class="container-fluid">
-
       <div class="navb-logo">
         <img src="#" alt="Logo">
       </div>
@@ -11,8 +10,11 @@
         <div class="item">
           <router-link to="/dashboard">Home</router-link>
         </div>
-        <div class="item" v-if="sessionInfo.sessionIsValid">
-          <router-link to="/item">Item 2</router-link>
+        <div class="item" v-if="session.sessionIsValid && session.sessionRole === 'Referrer'">
+          <router-link to="/referrer">Referrer</router-link>
+        </div>
+        <div class="item" v-if="session.sessionIsValid && session.sessionRole === 'Tutor'">
+          <router-link to="/tutor">Tutor</router-link>
         </div>
 
         <div class="item-button">
@@ -28,48 +30,29 @@
 
 <script>
 import { useSession } from '../session.js';
-import Dashboard from "./Dashboard.vue";
-import session from "../stores/session.js";
+import { createAuth0Client } from '@auth0/auth0-spa-js';
 
-const sessionInfo = useSession();
 export default {
   computed: {
     session() {
-      return session
+      return useSession();
     }
-  },
-  components: {Dashboard},
-  data() {
-    return {
-      isAuthenticated: false,
-      isReferrer: false,
-      isTutor: false,
-      sessionInfo: sessionInfo
-    };
   },
   methods: {
     async logout() {
-      //istanza Auth0Client
       const auth0 = await createAuth0Client({
-        domain: 'metodomerenda.auth0.com', //metti dominio
-        client_id: 'client-id', //mettere client id
+        domain: 'metodomerenda.auth0.com',
+        client_id: 'client-id',
         redirect_uri: window.location.origin,
       });
 
       await auth0.logout();
 
-      //aggiorna stato autenticazione su vuex
       this.$store.commit('setAuthenticated', false);
       this.$store.commit('setUserRole', null);
 
-      //redirect
       this.$router.push('/');
     },
-  },
-  created() {
-    this.isAuthenticated = this.$store.state.isAuthenticated;
-    this.isReferrer = this.$store.state.userRole === 'Referrer';
-    this.isTutor = this.$store.state.userRole === 'Tutor';
   },
 };
 </script>
